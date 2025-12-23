@@ -1,4 +1,4 @@
-# CLAUDE-PT-BR.md
+# CLAUDE.md
 
 Este arquivo fornece orientação ao Claude Code (claude.ai/code) ao trabalhar com código neste repositório.
 
