@@ -1,25 +1,23 @@
-# Webhook Payload Documentation
+# Documentação de Payload do Webhook
 
-This document provides comprehensive documentation for the webhook payload structure used by the Go WhatsApp Web
-Multidevice application.
+Este documento fornece documentação abrangente para a estrutura de payload do webhook usada pelo aplicativo Go WhatsApp Web Multidevice.
 
-## Overview
+## Visão Geral
 
-The webhook system sends HTTP POST requests to configured URLs whenever WhatsApp events occur. Each webhook request
-includes event data in JSON format and security headers for verification.
+O sistema de webhook envia requisições HTTP POST para URLs configuradas sempre que eventos do WhatsApp ocorrem. Cada requisição de webhook inclui dados do evento em formato JSON e cabeçalhos de segurança para verificação.
 
-## Security
+## Segurança
 
-### HMAC Signature Verification
+### Verificação de Assinatura HMAC
 
-All webhook requests include an HMAC SHA256 signature for security verification:
+Todas as requisições de webhook incluem uma assinatura HMAC SHA256 para verificação de segurança:
 
-- **Header**: `X-Hub-Signature-256`
-- **Format**: `sha256={signature}`
-- **Algorithm**: HMAC SHA256
-- **Default Secret**: `secret` (configurable via `--webhook-secret` or `WHATSAPP_WEBHOOK_SECRET`)
+- **Cabeçalho**: `X-Hub-Signature-256`
+- **Formato**: `sha256={assinatura}`
+- **Algoritmo**: HMAC SHA256
+- **Segredo Padrão**: `secret` (configurável via `--webhook-secret` ou `WHATSAPP_WEBHOOK_SECRET`)
 
-### Verification Example (Node.js)
+### Exemplo de Verificação (Node.js)
 
 ```javascript
 const crypto = require('crypto');
@@ -38,7 +36,7 @@ function verifyWebhookSignature(payload, signature, secret) {
 }
 ```
 
-### Verification Example (Python)
+### Exemplo de Verificação (Python)
 
 ```python
 import hmac
@@ -55,21 +53,21 @@ def verify_webhook_signature(payload, signature, secret):
     return hmac.compare_digest(expected_signature, received_signature)
 ```
 
-## Common Payload Fields
+## Campos Comuns de Payload
 
-All webhook payloads share these common fields:
+Todos os payloads de webhook compartilham estes campos comuns:
 
-| **Field**   | **Type** | **Description**                                                   |
-|-------------|----------|-------------------------------------------------------------------|
-| `sender_id` | string   | User part of sender JID (phone number, without `@s.whatsapp.net`) |
-| `chat_id`   | string   | User part of chat JID                                             |
-| `from`      | string   | Full JID of the sender (e.g., `628123456789@s.whatsapp.net`)      |
-| `timestamp` | string   | RFC3339 formatted timestamp (e.g., `2023-10-15T10:30:00Z`)        |
-| `pushname`  | string   | Display name of the sender                                        |
+| **Campo**   | **Tipo** | **Descrição**                                                      |
+|-------------|----------|--------------------------------------------------------------------|
+| `sender_id` | string   | Parte de usuário do JID do remetente (número de telefone, sem `@s.whatsapp.net`) |
+| `chat_id`   | string   | Parte de usuário do JID do chat                                    |
+| `from`      | string   | JID completo do remetente (ex: `628123456789@s.whatsapp.net`)     |
+| `timestamp` | string   | Timestamp formatado RFC3339 (ex: `2023-10-15T10:30:00Z`)          |
+| `pushname`  | string   | Nome de exibição do remetente                                      |
 
-## Message Events
+## Eventos de Mensagem
 
-### Text Message
+### Mensagem de Texto
 
 ```json
 {
@@ -77,9 +75,9 @@ All webhook payloads share these common fields:
   "chat_id": "628987654321",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2023-10-15T10:30:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
-    "text": "Hello, how are you?",
+    "text": "Olá, como vai?",
     "id": "3EB0C127D7BACC83D6A1",
     "replied_id": "",
     "quoted_message": ""
@@ -87,7 +85,7 @@ All webhook payloads share these common fields:
 }
 ```
 
-### Reply Message
+### Mensagem de Resposta
 
 ```json
 {
@@ -95,17 +93,17 @@ All webhook payloads share these common fields:
   "chat_id": "628987654321",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2023-10-15T10:35:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
-    "text": "I'm doing great, thanks!",
+    "text": "Estou ótimo, obrigado!",
     "id": "3EB0C127D7BACC83D6A2",
     "replied_id": "3EB0C127D7BACC83D6A1",
-    "quoted_message": "Hello, how are you?"
+    "quoted_message": "Olá, como vai?"
   }
 }
 ```
 
-### Reaction Message
+### Mensagem de Reação
 
 ```json
 {
@@ -113,7 +111,7 @@ All webhook payloads share these common fields:
   "chat_id": "628987654321",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2023-10-15T10:40:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "reaction": {
     "message": "👍",
     "id": "3EB0C127D7BACC83D6A1"
@@ -127,14 +125,14 @@ All webhook payloads share these common fields:
 }
 ```
 
-## Receipt Events
+## Eventos de Confirmação de Leitura
 
-Receipt events are triggered when messages receive acknowledgments such as delivery confirmations and read receipts.
-These events use the `message.ack` event type and provide information about message status changes.
+Eventos de confirmação de leitura são acionados quando mensagens recebem confirmações como confirmações de entrega e recibos de leitura.
+Esses eventos usam o tipo de evento `message.ack` e fornecem informações sobre mudanças de status de mensagem.
 
-### Message Delivered
+### Mensagem Entregue
 
-Triggered when a message is successfully delivered to the recipient's device.
+Acionado quando uma mensagem é entregue com sucesso ao dispositivo do destinatário.
 
 ```json
 {
@@ -146,16 +144,16 @@ Triggered when a message is successfully delivered to the recipient's device.
       "3EB00106E8BE0F407E88EC"
     ],
     "receipt_type": "delivered",
-    "receipt_type_description": "means the message was delivered to the device (but the user might not have noticed).",
+    "receipt_type_description": "significa que a mensagem foi entregue ao dispositivo (mas o usuário pode não ter notado).",
     "sender_id": "6289685XXXXXX@s.whatsapp.net"
   },
   "timestamp": "2025-07-18T22:44:20Z"
 }
 ```
 
-### Message Read
+### Mensagem Lida
 
-Triggered when a message is read by the recipient (they opened the chat and saw the message).
+Acionado quando uma mensagem é lida pelo destinatário (eles abriram o chat e viram a mensagem).
 
 ```json
 {
@@ -167,33 +165,33 @@ Triggered when a message is read by the recipient (they opened the chat and saw 
       "3EB00106E8BE0F407E88EC"
     ],
     "receipt_type": "read",
-    "receipt_type_description": "the user opened the chat and saw the message.",
+    "receipt_type_description": "o usuário abriu o chat e viu a mensagem.",
     "sender_id": "6289685XXXXXX@s.whatsapp.net"
   },
   "timestamp": "2025-07-18T22:44:44Z"
 }
 ```
 
-### Receipt Event Fields
+### Campos de Evento de Confirmação
 
-| **Field**                          | **Type** | **Description**                                           |
-|------------------------------------|----------|-----------------------------------------------------------|
-| `event`                            | string   | Always `"message.ack"` for receipt events                 |
-| `payload.chat_id`                  | string   | Chat identifier (group or individual chat)                |
-| `payload.from`                     | string   | Sender information with chat context                      |
-| `payload.ids`                      | array    | Array of message IDs that received the acknowledgment     |
-| `payload.receipt_type`             | string   | Type of receipt: `"delivered"`, `"read"`, etc.            |
-| `payload.receipt_type_description` | string   | Human-readable description of the receipt type            |
-| `payload.sender_id`                | string   | JID of the message sender                                 |
-| `timestamp`                        | string   | RFC3339 formatted timestamp when the receipt was received |
+| **Campo**                          | **Tipo** | **Descrição**                                              |
+|------------------------------------|----------|------------------------------------------------------------|
+| `event`                            | string   | Sempre `"message.ack"` para eventos de confirmação         |
+| `payload.chat_id`                  | string   | Identificador do chat (grupo ou chat individual)           |
+| `payload.from`                     | string   | Informações do remetente com contexto do chat              |
+| `payload.ids`                      | array    | Array de IDs de mensagem que receberam a confirmação       |
+| `payload.receipt_type`             | string   | Tipo de confirmação: `"delivered"`, `"read"`, etc.         |
+| `payload.receipt_type_description` | string   | Descrição legível do tipo de confirmação                   |
+| `payload.sender_id`                | string   | JID do remetente da mensagem                               |
+| `timestamp`                        | string   | Timestamp formatado RFC3339 quando a confirmação foi recebida |
 
-## Group Events
+## Eventos de Grupo
 
-Group events are triggered when group metadata changes, including member join/leave events, admin promotions/demotions, and group settings updates. These events use the `group.participants` event type and provide comprehensive information about group changes.
+Eventos de grupo são acionados quando os metadados do grupo mudam, incluindo eventos de entrada/saída de membros, promoções/rebaixamentos de administradores e atualizações de configurações do grupo. Esses eventos usam o tipo de evento `group.participants` e fornecem informações abrangentes sobre mudanças no grupo.
 
-### Group Member Join
+### Entrada de Membro no Grupo
 
-Triggered when users join or are added to a group.
+Acionado quando usuários entram ou são adicionados a um grupo.
 
 ```json
 {
@@ -210,9 +208,9 @@ Triggered when users join or are added to a group.
 }
 ```
 
-### Group Member Leave
+### Saída de Membro do Grupo
 
-Triggered when users leave or are removed from a group.
+Acionado quando usuários saem ou são removidos de um grupo.
 
 ```json
 {
@@ -228,9 +226,9 @@ Triggered when users leave or are removed from a group.
 }
 ```
 
-### Group Member Promotion
+### Promoção de Membro do Grupo
 
-Triggered when users are promoted to admin.
+Acionado quando usuários são promovidos a administradores.
 
 ```json
 {
@@ -246,9 +244,9 @@ Triggered when users are promoted to admin.
 }
 ```
 
-### Group Member Demotion
+### Rebaixamento de Membro do Grupo
 
-Triggered when users are demoted from admin.
+Acionado quando usuários são rebaixados de administrador.
 
 ```json
 {
@@ -264,19 +262,19 @@ Triggered when users are demoted from admin.
 }
 ```
 
-### Group Event Fields
+### Campos de Evento de Grupo
 
-| **Field**         | **Type** | **Description**                                              |
-|-------------------|----------|--------------------------------------------------------------|
-| `event`           | string   | Always `"group.participants"` for group events              |
-| `payload.chat_id` | string   | Group identifier (e.g., `"120363402106XXXXX@g.us"`)         |
-| `payload.type`    | string   | Action type: `"join"`, `"leave"`, `"promote"`, or `"demote"` |
-| `payload.jids`    | array    | Array of user JIDs affected by this action                  |
-| `timestamp`       | string   | RFC3339 formatted timestamp when the group event occurred   |
+| **Campo**         | **Tipo** | **Descrição**                                                 |
+|-------------------|----------|---------------------------------------------------------------|
+| `event`           | string   | Sempre `"group.participants"` para eventos de grupo          |
+| `payload.chat_id` | string   | Identificador do grupo (ex: `"120363402106XXXXX@g.us"`)      |
+| `payload.type`    | string   | Tipo de ação: `"join"`, `"leave"`, `"promote"` ou `"demote"` |
+| `payload.jids`    | array    | Array de JIDs de usuário afetados por esta ação              |
+| `timestamp`       | string   | Timestamp formatado RFC3339 quando o evento do grupo ocorreu |
 
-## Media Messages
+## Mensagens de Mídia
 
-### Image Message
+### Mensagem de Imagem
 
 ```json
 {
@@ -284,7 +282,7 @@ Triggered when users are demoted from admin.
   "chat_id": "628123456789",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2025-07-13T11:05:51Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
     "text": "",
     "id": "********************",
@@ -294,12 +292,12 @@ Triggered when users are demoted from admin.
   "image": {
     "media_path": "statics/media/1752404751-ad9e37ac-c658-4fe5-8d25-ba4a3f4d58fd.jpe",
     "mime_type": "image/jpeg",
-    "caption": "gijg"
+    "caption": "Veja esta foto"
   }
 }
 ```
 
-### Video Message
+### Mensagem de Vídeo
 
 ```json
 {
@@ -307,7 +305,7 @@ Triggered when users are demoted from admin.
   "chat_id": "628123456789",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2025-07-13T11:07:24Z",
-  "pushname": "Notification System",
+  "pushname": "Sistema de Notificação",
   "message": {
     "text": "",
     "id": "********************",
@@ -317,12 +315,12 @@ Triggered when users are demoted from admin.
   "video": {
     "media_path": "statics/media/1752404845-b9393cd1-8546-4df9-8a60-ee3276036aba.m4v",
     "mime_type": "video/mp4",
-    "caption": "okk"
+    "caption": "Ok"
   }
 }
 ```
 
-### Audio Message
+### Mensagem de Áudio
 
 ```json
 {
@@ -330,7 +328,7 @@ Triggered when users are demoted from admin.
   "chat_id": "628987654321",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2023-10-15T10:55:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
     "text": "",
     "id": "3EB0C127D7BACC83D6A5",
@@ -340,12 +338,12 @@ Triggered when users are demoted from admin.
   "audio": {
     "media_path": "statics/media/1752404905-b9393cd1-8546-4df9-8a60-ee3276036aba.m4v",
     "mime_type": "audio/ogg",
-    "caption": "okk"
+    "caption": "Ok"
   }
 }
 ```
 
-### Document Message
+### Mensagem de Documento
 
 ```json
 {
@@ -353,7 +351,7 @@ Triggered when users are demoted from admin.
   "chat_id": "628987654321",
   "from": "628123456789@s.whatsapp.net",
   "timestamp": "2023-10-15T11:00:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
     "text": "",
     "id": "3EB0C127D7BACC83D6A6",
@@ -363,12 +361,12 @@ Triggered when users are demoted from admin.
   "document": {
     "media_path": "statics/media/1752404965-b9393cd1-8546-4df9-8a60-ee3276036aba.m4v",
     "mime_type": "application/pdf",
-    "caption": "okk"
+    "caption": "Ok"
   }
 }
 ```
 
-### Sticker Message
+### Mensagem de Sticker
 
 ```json
 {
@@ -391,9 +389,9 @@ Triggered when users are demoted from admin.
 }
 ```
 
-## Special Message Types
+## Tipos Especiais de Mensagem
 
-### Contact Message
+### Mensagem de Contato
 
 ```json
 {
@@ -424,15 +422,15 @@ Triggered when users are demoted from admin.
 }
 ```
 
-### Location Message
+### Mensagem de Localização
 
 ```json
 {
   "sender_id": "628123456789",
   "chat_id": "628987654321",
-  "from": "John Doe",
+  "from": "João Silva",
   "timestamp": "2023-10-15T11:15:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
     "text": "",
     "id": "3EB0C127D7BACC83D6A9",
@@ -440,15 +438,15 @@ Triggered when users are demoted from admin.
     "quoted_message": ""
   },
   "location": {
-    "degreesLatitude": -6.2088,
-    "degreesLongitude": 106.8456,
-    "name": "Jakarta, Indonesia",
-    "address": "Central Jakarta, DKI Jakarta, Indonesia"
+    "degreesLatitude": -23.5505,
+    "degreesLongitude": -46.6333,
+    "name": "São Paulo, Brasil",
+    "address": "São Paulo, SP, Brasil"
   }
 }
 ```
 
-### Live Location Message
+### Mensagem de Localização ao Vivo
 
 ```json
 {
@@ -457,7 +455,7 @@ Triggered when users are demoted from admin.
   "location": {
     "degreesLatitude": -7.8050297,
     "degreesLongitude": 110.4549165,
-    "JPEGThumbnail": "base64_image_thumbnail",
+    "JPEGThumbnail": "miniatura_imagem_base64",
     "contextInfo": {
       "expiration": 7776000,
       "ephemeralSettingTimestamp": 1751808692,
@@ -480,9 +478,9 @@ Triggered when users are demoted from admin.
 }
 ```
 
-## Protocol Messages
+## Mensagens de Protocolo
 
-### Message Revoked
+### Mensagem Revogada
 
 ```json
 {
@@ -504,19 +502,19 @@ Triggered when users are demoted from admin.
 }
 ```
 
-### Message Edited
+### Mensagem Editada
 
-When a message is edited, the webhook includes the original message ID to track which message was modified.
+Quando uma mensagem é editada, o webhook inclui o ID da mensagem original para rastrear qual mensagem foi modificada.
 
 ```json
 {
   "action": "message_edited",
   "chat_id": "6289XXXXXXXXX",
   "original_message_id": "94D13237B4D7F33EE4A63228BBD79EC0",
-  "edited_text": "hhhiawww",
+  "edited_text": "Olá mundo editado",
   "from": "6289XXXXXXXXX@s.whatsapp.net",
   "message": {
-    "text": "hhhiawww",
+    "text": "Olá mundo editado",
     "id": "D6271D8223A05B4DA6AE9FE3CD632543",
     "replied_id": "",
     "quoted_message": ""
@@ -527,22 +525,22 @@ When a message is edited, the webhook includes the original message ID to track 
 }
 ```
 
-**Fields:**
-- `original_message_id`: The ID of the message that was edited (use this to update the correct message in your database)
-- `edited_text`: The new text content after editing
-- `message.id`: The ID of the edit event itself (different from the original message ID)
+**Campos:**
+- `original_message_id`: O ID da mensagem que foi editada (use isto para atualizar a mensagem correta no seu banco de dados)
+- `edited_text`: O novo conteúdo de texto após a edição
+- `message.id`: O ID do evento de edição em si (diferente do ID da mensagem original)
 
-## Special Flags
+## Flags Especiais
 
-### View Once Message
+### Mensagem de Visualização Única
 
 ```json
 {
   "sender_id": "628123456789",
   "chat_id": "628987654321",
-  "from": "John Doe",
+  "from": "João Silva",
   "timestamp": "2023-10-15T11:40:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
     "text": "",
     "id": "3EB0C127D7BACC83D6B2",
@@ -552,23 +550,23 @@ When a message is edited, the webhook includes the original message ID to track 
   "image": {
     "media_path": "statics/media/1752405060-b9393cd1-8546-4df9-8a60-ee3276036aba.m4v",
     "mime_type": "image/jpeg",
-    "caption": "okk"
+    "caption": "Ok"
   },
   "view_once": true
 }
 ```
 
-### Forwarded Message
+### Mensagem Encaminhada
 
 ```json
 {
   "sender_id": "628123456789",
   "chat_id": "628987654321",
-  "from": "John Doe",
+  "from": "João Silva",
   "timestamp": "2023-10-15T11:45:00Z",
-  "pushname": "John Doe",
+  "pushname": "João Silva",
   "message": {
-    "text": "This is a forwarded message",
+    "text": "Esta é uma mensagem encaminhada",
     "id": "3EB0C127D7BACC83D6B3",
     "replied_id": "",
     "quoted_message": ""
@@ -577,29 +575,29 @@ When a message is edited, the webhook includes the original message ID to track 
 }
 ```
 
-## Integration Guide
+## Guia de Integração
 
-### Setting Up Webhook Endpoint
+### Configurando o Endpoint de Webhook
 
-1. **Configure webhook URL(s)**:
-
-   ```bash
-   ./whatsapp rest --webhook="https://yourapp.com/webhook"
-   ```
-
-2. **Set webhook secret**:
+1. **Configure a(s) URL(s) de webhook**:
 
    ```bash
-   ./whatsapp rest --webhook-secret="your-secret-key"
+   ./whatsapp rest --webhook="https://seuapp.com/webhook"
    ```
 
-3. **Multiple webhooks**:
+2. **Defina o segredo do webhook**:
+
+   ```bash
+   ./whatsapp rest --webhook-secret="sua-chave-secreta"
+   ```
+
+3. **Múltiplos webhooks**:
 
    ```bash
    ./whatsapp rest --webhook="https://app1.com/webhook,https://app2.com/webhook"
    ```
 
-### Webhook Endpoint Implementation (Express.js)
+### Implementação do Endpoint de Webhook (Express.js)
 
 ```javascript
 const express = require('express');
@@ -611,59 +609,59 @@ app.use(express.raw({type: 'application/json'}));
 app.post('/webhook', (req, res) => {
     const signature = req.headers['x-hub-signature-256'];
     const payload = req.body;
-    const secret = 'your-secret-key';
+    const secret = 'sua-chave-secreta';
 
-    // Verify signature
+    // Verificar assinatura
     if (!verifyWebhookSignature(payload, signature, secret)) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('Não autorizado');
     }
 
-    // Parse and process webhook data
+    // Parsear e processar dados do webhook
     const data = JSON.parse(payload);
-    console.log('Received webhook:', data);
+    console.log('Webhook recebido:', data);
 
-    // Handle different event types
+    // Lidar com diferentes tipos de evento
     if (data.event === 'message.ack') {
-        console.log(`Message ${data.payload.receipt_type}:`, {
+        console.log(`Mensagem ${data.payload.receipt_type}:`, {
             chat_id: data.payload.chat_id,
             message_ids: data.payload.ids,
             description: data.payload.receipt_type_description
         });
     } else if (data.event === 'group.participants') {
-        console.log(`Group ${data.payload.type} event:`, {
+        console.log(`Evento ${data.payload.type} do grupo:`, {
             chat_id: data.payload.chat_id,
             type: data.payload.type,
             affected_users: data.payload.jids
         });
         
-        // Handle specific group actions
+        // Lidar com ações específicas do grupo
         switch (data.payload.type) {
             case 'join':
-                console.log(`${data.payload.jids.length} users joined group ${data.payload.chat_id}`);
-                // Auto-greet new members
+                console.log(`${data.payload.jids.length} usuários entraram no grupo ${data.payload.chat_id}`);
+                // Saudar novos membros automaticamente
                 data.payload.jids.forEach(jid => {
-                    console.log(`Welcome ${jid} to the group!`);
+                    console.log(`Bem-vindo ${jid} ao grupo!`);
                 });
                 break;
             case 'leave':
-                console.log(`${data.payload.jids.length} users left group ${data.payload.chat_id}`);
-                // Update member database
+                console.log(`${data.payload.jids.length} usuários saíram do grupo ${data.payload.chat_id}`);
+                // Atualizar banco de dados de membros
                 break;
             case 'promote':
-                console.log(`${data.payload.jids.length} users promoted in group ${data.payload.chat_id}`);
-                // Notify about new admins
+                console.log(`${data.payload.jids.length} usuários promovidos no grupo ${data.payload.chat_id}`);
+                // Notificar sobre novos administradores
                 break;
             case 'demote':
-                console.log(`${data.payload.jids.length} users demoted in group ${data.payload.chat_id}`);
-                // Handle admin removal
+                console.log(`${data.payload.jids.length} usuários rebaixados no grupo ${data.payload.chat_id}`);
+                // Lidar com remoção de administrador
                 break;
         }
     } else if (data.action === 'message_deleted_for_me') {
-        console.log('Message deleted:', data.deleted_message_id);
+        console.log('Mensagem deletada:', data.deleted_message_id);
     } else if (data.action === 'message_revoked') {
-        console.log('Message revoked:', data.revoked_message_id);
+        console.log('Mensagem revogada:', data.revoked_message_id);
     } else if (data.message) {
-        console.log('New message:', data.message.text);
+        console.log('Nova mensagem:', data.message.text);
     }
 
     res.status(200).send('OK');
@@ -683,93 +681,93 @@ function verifyWebhookSignature(payload, signature, secret) {
 }
 
 app.listen(3001, () => {
-    console.log('Webhook server listening on port 3001');
+    console.log('Servidor de webhook ouvindo na porta 3001');
 });
 ```
 
-### Error Handling
+### Tratamento de Erros
 
-The webhook system includes retry logic with exponential backoff:
+O sistema de webhook inclui lógica de retry com backoff exponencial:
 
-- **Timeout**: 10 seconds per request
-- **Max Attempts**: 5 retries
-- **Backoff**: Exponential (1s, 2s, 4s, 8s, 16s)
+- **Timeout**: 10 segundos por requisição
+- **Máximo de Tentativas**: 5 retries
+- **Backoff**: Exponencial (1s, 2s, 4s, 8s, 16s)
 
-Ensure your webhook endpoint:
+Garanta que seu endpoint de webhook:
 
-- Responds within 10 seconds
-- Returns HTTP 2xx status for successful processing
-- Handles duplicate events gracefully
-- Validates signatures for security
+- Responda dentro de 10 segundos
+- Retorne status HTTP 2xx para processamento bem-sucedido
+- Lide com eventos duplicados de forma adequada
+- Valide assinaturas para segurança
 
-## Configuration
+## Configuração
 
-### Environment Variables
+### Variáveis de Ambiente
 
 ```bash
-# Single webhook URL
-WHATSAPP_WEBHOOK=https://yourapp.com/webhook
+# URL única de webhook
+WHATSAPP_WEBHOOK=https://seuapp.com/webhook
 
-# Multiple webhook URLs (comma-separated)
+# Múltiplas URLs de webhook (separadas por vírgula)
 WHATSAPP_WEBHOOK=https://app1.com/webhook,https://app2.com/webhook
 
-# Webhook secret for HMAC verification
-WHATSAPP_WEBHOOK_SECRET=your-super-secret-key
+# Segredo do webhook para verificação HMAC
+WHATSAPP_WEBHOOK_SECRET=sua-chave-super-secreta
 ```
 
-### Command Line Flags
+### Flags de Linha de Comando
 
 ```bash
-# Single webhook
-./whatsapp rest --webhook="https://yourapp.com/webhook"
+# Webhook único
+./whatsapp rest --webhook="https://seuapp.com/webhook"
 
-# Multiple webhooks
+# Múltiplos webhooks
 ./whatsapp rest --webhook="https://app1.com/webhook,https://app2.com/webhook"
 
-# Custom secret
-./whatsapp rest --webhook-secret="your-secret-key"
+# Segredo customizado
+./whatsapp rest --webhook-secret="sua-chave-secreta"
 ```
 
-## Best Practices
+## Melhores Práticas
 
-1. **Always verify signatures** to ensure webhook authenticity
-2. **Handle duplicates** - the same event might be sent multiple times
-3. **Process quickly** - respond within 10 seconds to avoid timeouts
-4. **Log errors** for debugging webhook integration issues
-5. **Use HTTPS** for webhook URLs to ensure secure transmission
-6. **Store media files** locally if you need to process them later
-7. **Implement proper error handling** for different event types
+1. **Sempre verifique assinaturas** para garantir a autenticidade do webhook
+2. **Lide com duplicatas** - o mesmo evento pode ser enviado múltiplas vezes
+3. **Processe rapidamente** - responda dentro de 10 segundos para evitar timeouts
+4. **Registre erros** para depurar problemas de integração do webhook
+5. **Use HTTPS** para URLs de webhook para garantir transmissão segura
+6. **Armazene arquivos de mídia** localmente se você precisar processá-los depois
+7. **Implemente tratamento adequado de erros** para diferentes tipos de evento
 
-## Troubleshooting
+## Solução de Problemas
 
-### Common Issues
+### Problemas Comuns
 
-1. **Webhook not receiving events**:
-    - Check webhook URL is accessible from the internet
-    - Verify webhook configuration
-    - Check firewall and network settings
+1. **Webhook não recebendo eventos**:
+    - Verifique se a URL do webhook está acessível pela internet
+    - Verifique a configuração do webhook
+    - Verifique firewall e configurações de rede
 
-2. **Signature verification fails**:
-    - Ensure webhook secret matches configuration
-    - Use raw request body for signature calculation
-    - Check HMAC implementation
+2. **Falha na verificação de assinatura**:
+    - Garanta que o segredo do webhook corresponde à configuração
+    - Use corpo da requisição bruto para cálculo da assinatura
+    - Verifique implementação do HMAC
 
 3. **Timeouts**:
-    - Optimize webhook processing speed
-    - Implement asynchronous processing
-    - Return response quickly, process in background
+    - Otimize velocidade de processamento do webhook
+    - Implemente processamento assíncrono
+    - Retorne resposta rapidamente, processe em segundo plano
 
-4. **Missing media files**:
-    - Check media storage path configuration
-    - Ensure sufficient disk space
-    - Verify file permissions
+4. **Arquivos de mídia faltando**:
+    - Verifique configuração do caminho de armazenamento de mídia
+    - Garanta espaço em disco suficiente
+    - Verifique permissões de arquivo
 
-### Debug Logging
+### Log de Debug
 
-Enable debug mode to see webhook logs:
+Habilite o modo debug para ver logs do webhook:
 
 ```bash
-./whatsapp rest --debug=true --webhook="https://yourapp.com/webhook"
+./whatsapp rest --debug=true --webhook="https://seuapp.com/webhook"
 ```
 
-This will show detailed logs of webhook delivery attempts and errors.
+Isso mostrará logs detalhados de tentativas de entrega de webhook e erros.
